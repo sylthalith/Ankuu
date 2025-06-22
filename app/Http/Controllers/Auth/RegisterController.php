@@ -12,6 +12,9 @@ use Illuminate\Validation\Rules;
 
 class RegisterController extends Controller
 {
+    public function show() {
+        return view('auth/register');
+    }
     public function store(Request $request)
     {
         $request->validate([
@@ -28,6 +31,6 @@ class RegisterController extends Controller
 
         Auth::login($user);
 
-
+        return redirect()->route('dashboard');
     }
 }

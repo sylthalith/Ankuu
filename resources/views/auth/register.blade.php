@@ -13,7 +13,7 @@
     <a href="{{ route('welcome') }}">Welcome</a>
     <a href="{{ route('login') }}">Login</a>
 
-    <form method="POST" action="{{ route('register.post') }}">
+    <form method="POST" action="{{ route('register.store') }}">
         @csrf
         <label for="name">Name</label>
         <input type="text" id="name" name="name">
