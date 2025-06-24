@@ -24,12 +24,14 @@ class LoginController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            return redirect()->intended('dashboard');
+//            $decks = auth()->user()->decks()->get();
+
+            return redirect()->route('dashboard');
         }
 
         return back()->withErrors([
-            'name' => 'The provided credentials do not match our records.',
-        ])->onlyInput('name');
+            'error' => 'Incorrect data'
+        ]);
     }
 
     public function logout(Request $request)

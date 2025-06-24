@@ -31,6 +31,8 @@ class RegisterController extends Controller
 
         Auth::login($user);
 
+//        $decks = $user->decks()->get();
+
         return redirect()->route('dashboard');
     }
 }
