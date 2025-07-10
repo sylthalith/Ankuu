@@ -47,3 +47,11 @@ Route::post('/cards/create', [CardController::class, 'store'])->name('cards.stor
 // Study
 
 Route::post('/study', [StudyController::class, 'start'])->name('study');
+
+Route::get('/next', [StudyController::class, 'next'])->name('study.next');
+
+Route::post('/answer', [StudyController::class, 'answer'])->name('study.answer');
+
+Route::get('/test', function () {
+    return response()->file(public_path('test.php'));
+});

@@ -26,4 +26,9 @@ class Card extends Model
     {
         return $this->belongsTo(Deck::class);
     }
+
+    public function sessionCard()
+    {
+        return $this->hasOne(SessionCard::class);
+    }
 }

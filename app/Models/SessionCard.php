@@ -23,4 +23,9 @@ class SessionCard extends Model
     {
         return $this->belongsTo(StudySession::class);
     }
+
+    public function card()
+    {
+        return $this->belongsTo(Card::class);
+    }
 }
