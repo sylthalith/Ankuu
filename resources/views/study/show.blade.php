@@ -17,6 +17,10 @@
         Loading...
     </div>
 
+    <div id="error" class="hidden">
+
+    </div>
+
     <div id="study-app">
         <pre id="front" class="hidden"></pre>
         <pre id="back" class="hidden"></pre>

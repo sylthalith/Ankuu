@@ -1,6 +1,36 @@
+function showError(message) {
+    hideAll()
+    error.classList.remove('hidden')
+    error.textContent = message
+}
+
+function hideAll() {
+    loading.classList.add('hidden')
+    front.classList.add('hidden')
+    back.classList.add('hidden')
+    show.classList.add('hidden')
+    again.classList.add('hidden')
+    hard.classList.add('hidden')
+    good.classList.add('hidden')
+    easy.classList.add('hidden')
+}
+
 async function loadData() {
     const response = await fetch('/next');
     return await response.json();
+}
+
+async function sendData(rating) {
+    const formData = new FormData();
+    formData.append('session_card_id', data.session_card_id);
+    formData.append('rating', rating);
+    formData.append('_token', token);
+    const response = await fetch('/answer', {
+        method: 'POST',
+        body: formData
+    })
+
+    return await response.json()
 }
 
 function showFront() {
@@ -26,118 +56,36 @@ function showBack() {
     good.classList.remove('hidden')
     easy.classList.remove('hidden')
 }
-//
-// async function submit(rating) {
-//     const formData = new FormData();
-//     formData.append('session_card_id', data.session_card_id);
-//     formData.append('rating', rating);
-//     formData.append('_token', token);
-//
-//     const response = await fetch('/answer', {
-//         method: 'POST',
-//         body: formData
-//     })
-//
-//     const a = await response.json()
-//
-//     if (a.success) {
-//         back.classList.add('hidden')
-//         again.classList.add('hidden')
-//         hard.classList.add('hidden')
-//         good.classList.add('hidden')
-//         easy.classList.add('hidden')
-//
-//         data = await nextPromise
-//         nextPromise = null
-//
-//         if (!data) {
-//             data = await loadData()
-//         }
-//
-//         await main()
-//     }
-// }
-//
-// async function main() {
-//     if (!data) {
-//         data = await loadData()
-//     }
-//
-//     if (data.end) {
-//         window.location.href = data.url;
-//     }
-//
-//     showFront()
-//     nextPromise = loadData()
-// }
 
 async function submit(rating) {
-    console.time('submit-total');
-    console.time('fetch-answer');
-    const formData = new FormData();
-    formData.append('session_card_id', data.session_card_id);
-    formData.append('rating', rating);
-    formData.append('_token', token);
+    sendData(rating).catch(error => {
+        showError(error.message || "Ошибка при отправке данных")
+    })
 
-    const response = await fetch('/answer', {
-        method: 'POST',
-        body: formData
-    });
-    console.timeEnd('fetch-answer');
+    back.classList.add('hidden')
+    again.classList.add('hidden')
+    hard.classList.add('hidden')
+    good.classList.add('hidden')
+    easy.classList.add('hidden')
 
-    console.time('parse-answer');
-    const a = await response.json();
-    console.timeEnd('parse-answer');
+    data = await nextData
+    nextData = null
 
-    if (a.success) {
-        console.time('hide-ui');
-        back.classList.add('hidden');
-        again.classList.add('hidden');
-        hard.classList.add('hidden');
-        good.classList.add('hidden');
-        easy.classList.add('hidden');
-        console.timeEnd('hide-ui');
-
-        console.time('await-nextPromise');
-        console.log('nextPromise before await:', nextPromise);
-        data = await nextPromise;
-        console.log('Data from nextPromise:', data);
-        console.timeEnd('await-nextPromise');
-        nextPromise = null;
-
-        if (!data) {
-            console.time('loadData-fallback');
-            data = await loadData();
-            console.timeEnd('loadData-fallback');
-        }
-
-        console.time('main');
-        await main();
-        console.timeEnd('main');
-    }
-    console.timeEnd('submit-total');
+    await main()
 }
 
 async function main() {
-    console.time('main-total');
     if (!data) {
-        console.time('loadData-main');
-        data = await loadData();
-        console.timeEnd('loadData-main');
+        data = await loadData()
     }
 
     if (data.end) {
         window.location.href = data.url;
     }
 
-    console.time('showFront');
-    showFront();
-    console.timeEnd('showFront');
+    nextData = loadData()
 
-    console.time('start-nextPromise');
-    nextPromise = loadData();
-    console.timeEnd('start-nextPromise');
-    console.timeEnd('main-total');
+    showFront()
 }
 
 const loading = document.getElementById('loading')
@@ -148,6 +96,7 @@ const again = document.getElementById('again')
 const hard = document.getElementById('hard')
 const good = document.getElementById('good')
 const easy = document.getElementById('easy')
+const error = document.getElementById('error')
 
 show.addEventListener('click', () => showBack())
 again.addEventListener('click', () => submit('again'))
@@ -156,7 +105,7 @@ good.addEventListener('click', () => submit('good'))
 easy.addEventListener('click', () => submit('easy'))
 
 let data = null
-let nextPromise = null
+let nextData = null
 const token = document.querySelector('meta[name="csrf-token"]').content
 
 main()
